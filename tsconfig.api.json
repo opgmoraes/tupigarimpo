@@ -4,5 +4,5 @@
     "module": "ESNext", "moduleResolution": "Bundler",
     "strict": true, "skipLibCheck": true, "noEmit": true
   },
-  "include": ["api/worker.ts"]
+  "include": ["api/worker.ts", "api/pages.ts"]
 }

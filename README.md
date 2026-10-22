@@ -32,7 +32,7 @@ Produtos têm exportação PNG feed 1080x1350 e story 1080x1920 usando os person
 
 ## Verificação
 
-`npm test` (31 testes nesta etapa), `npm run check:api`, `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
+`npm test` (34 testes nesta etapa), `npm run check:api`, `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
 
 ## Cloudflare
 
@@ -44,3 +44,7 @@ Referências: [Cloudflare SPA](https://developers.cloudflare.com/workers/static-
 
 Rotação ainda requer ação nos provedores. Revogar tokens antigos do bot no BotFather; invalidar tokens privados GitHub/Cloudflare divulgados; rotacionar chaves secretas Supabase conforme o tipo. Senha de banco/JWT signing secret exigem planejamento do impacto em conexões e sessões. Não colar valores novos no chat. Nenhum segredo privado foi copiado para o código ou repositório. No navegador, mudanças de credenciais ficam com o usuário.
 
+
+## Backend no Pages (modo usado para upload direto)
+
+O build também gera `dist/_worker.js` em modo avançado oficial do Pages. `_routes.json` executa o backend somente em /api/* e /health; demais arquivos continuam estáticos. O frontend usa a API no mesmo domínio. Configure SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY e STUDIO_ORIGIN nas variáveis de produção do Pages e TELEGRAM_BOT_TOKEN como segredo. Essas configurações exigem um novo deploy. O Worker separado é uma opção futura, exigindo mudar o endereço da API no frontend.
