@@ -18,9 +18,11 @@ describe('server authentication and affiliate validation', () => {
     for (const value of ['https://amazon.com.br.evil.test/x', 'http://amzn.to/a', 'https://user:secret@amzn.to/x', 'javascript:alert(1)']) expect(() => affiliateUrl(value)).toThrow();
     expect(affiliateUrl('https://s.shopee.com.br/abc')).toBe('https://s.shopee.com.br/abc');
   });
-  it('only describes actual price reductions and labels affiliate links', () => {
-    const text = messageFor({ title: 'Achado', price: 50, old_price: 40, affiliate_url: 'https://amzn.to/abc' });
-    expect(text).not.toContain('De R$'); expect(text).toContain('Link de afiliado');
+  it('requires actual price reductions and highlights discounts and complete coupons', () => {
+    const text = messageFor({ title: 'Achado', price: 50, old_price: 100, coupon_code: 'TUPI10', affiliate_url: 'https://amzn.to/abc' });
+    expect(text).toContain('50% OFF'); expect(text).toContain('De R$'); expect(text).toContain('Por R$');
+    expect(text).toContain('CUPOM: TUPI10'); expect(text).toContain('Publicidade'); expect(text).not.toContain('Link de afiliado');
+    expect(() => messageFor({ title: 'Achado', price: 50, old_price: 40 })).toThrow('preço anterior');
     expect(() => messageFor({ title: 'Achado', price: 0 })).toThrow();
   });
 });
@@ -38,7 +40,7 @@ function setup(claim = true, ambiguous = false) {
     if (url.includes('/publications?')) return Response.json([{ id, status: 'draft', offer_id: id, channel_id: id }]);
     if (url.includes('/offers?')) return Response.json([{ id, product_id: id, status: 'approved' }]);
     if (url.includes('/channels?')) return Response.json([{ active: true, platform: 'telegram', external_id: '@tupigarimpo' }]);
-    return Response.json([{ title: 'Produto real', price: 50, affiliate_url: 'https://amzn.to/abc' }]);
+    return Response.json([{ title: 'Produto real', price: 50, old_price: 100, affiliate_url: 'https://amzn.to/abc' }]);
   }));
   return calls;
 }

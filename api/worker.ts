@@ -1,3 +1,4 @@
+import { discountFor } from '../shared/discount';
 export interface Env {
   TELEGRAM_BOT_TOKEN: string;
   SUPABASE_URL: string;
@@ -22,9 +23,9 @@ export function affiliateUrl(value: unknown): string {
 export function messageFor(product: RecordData): string {
   const price = Number(product.price);
   if (!Number.isFinite(price) || price <= 0 || !product.title) throw new PublicError(422, 'Produto sem título ou preço válido.');
-  const money = (n: number) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const old = Number(product.old_price);
-  return ['⛏️ ACHADO DO TUPI', '', String(product.title).slice(0, 220), old > price ? `De ${money(old)} por ${money(price)}` : `Por ${money(price)}`, product.coupon_code ? `Cupom: ${String(product.coupon_code).slice(0, 80)}` : '', '', affiliateUrl(product.affiliate_url), '', 'Link de afiliado. Preço e disponibilidade podem mudar.'].filter((line, i, all) => line || all[i - 1]).join('\n');
+  let discount: ReturnType<typeof discountFor>;
+  try { discount = discountFor(product); } catch (error) { throw new PublicError(422, (error as Error).message); }
+  return ['⛏️ ACHADO DO TUPI', '', String(product.title).slice(0, 220), `🔥 ${discount.percent}% OFF • Economize ${discount.saving}`, `De ${discount.previous}`, `Por ${discount.current}`, discount.coupon ? `🎟️ CUPOM: ${discount.coupon}` : '', '', '🛒 Garanta o seu:', affiliateUrl(product.affiliate_url), '', 'Publicidade • Preço e disponibilidade podem mudar.'].filter((line, i, all) => line || all[i - 1]).join('\n');
 }
 async function telegram(env: Env, method: string, body: RecordData) {
   if (!env.TELEGRAM_BOT_TOKEN) throw new PublicError(503, 'O segredo do Telegram ainda não foi configurado.');
