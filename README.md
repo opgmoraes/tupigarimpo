@@ -2,6 +2,8 @@
 
 React + TypeScript + Vite para a equipe TupiGarimpo. Supabase Auth por e-mail/senha, autorização pela função existente `is_garimpo_member()` e tabelas existentes `profiles`, `products`, `offers`, `channels`, `templates`, `publications`.
 
+Frontend: https://garimpo-studio.pages.dev/. Identidade visual usa os PNGs originais do kit Tupi de 18/10/2026 em public/brand (logo, avatar, mascote em poses e selo), com paleta e tipografia recomendadas no manual. Direção documentada em docs/visual-design.md. Publicação atual via upload direto no Cloudflare Pages; novos commits não disparam deployment automaticamente.
+
 ## Configuração
 
 Node 24. Execute `npm ci`, copie `.env.example` para `.env.local` e preencha a chave **publishable** atual do projeto. Depois execute `npm run dev`. PowerShell: `Copy-Item .env.example .env.local`.
