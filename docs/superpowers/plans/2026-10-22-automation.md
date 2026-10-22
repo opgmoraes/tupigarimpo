@@ -12,11 +12,15 @@
 - Store discovery and publication separately; scheduled ingestion requires server Supabase access.
 
 ## Tasks
-- [ ] Add `api/worker.ts`: authenticated bot health and publication delivery using existing tables and user RLS; test revoked members, wrong channels, concurrent claims, and ambiguous delivery.
-- [ ] Add `src/TelegramPanel.tsx`: connection test and explicit publication action with session token; no secret fields.
+- [x] Add `api/worker.ts`: authenticated bot health and publication delivery using existing tables and user RLS; test revoked members, wrong channels, concurrent claims, and ambiguous delivery.
+- [x] Add `src/TelegramPanel.tsx`: connection test and explicit publication action with session token; no secret fields.
 - [ ] Generate feed/story artwork from validated product data and original brand assets; verify dimensions and failure handling.
 - [ ] Inspect affiliate accounts: Shopee API, Mercado Livre affiliate links, Amazon Creators API eligibility, Shein official feeds. Implement each verified integration in a separate provider module.
 - [ ] Add ingestion schema, secret bindings, scheduled discovery and deduplication after available provider credentials are known.
 - [ ] Test build, worker types and delivery behavior, deploy, and verify real bot permissions. A production message requires a genuine offer.
 
 User has explicitly authorized implementation and Telegram delivery; proceed in this session without a separate planning approval.
+
+## Verified deployment
+
+Pages advanced mode deployed successfully on 2026-10-21. Live authenticated status confirmed @TupiGarimpoBot can publish to @tupigarimpo. The real channel record was created successfully through the member UI. Discovery and scheduling remain pending affiliate API access. No promotional message was sent and no real artwork export has been visually verified yet.
