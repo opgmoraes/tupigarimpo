@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+.dev.vars*
+.wrangler/
+.local-cloudflare/
+coverage/
+*.log
