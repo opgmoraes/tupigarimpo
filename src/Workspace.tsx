@@ -3,6 +3,8 @@ import type { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
 import { labels, parseRecord, tables, titleOf, type Row, type Table } from './lib/records';
 import { initialRecord, RecordFields } from './RecordFields';
+import { TelegramPanel, sendPublication } from './TelegramPanel';
+import { exportArtwork } from './lib/artwork';
 import { BrandLogo, EmptyState, NavIcon, sectionDescriptions, StudioHero } from './Brand';
 
 export function Workspace({ session }: { session: Session }) {
@@ -11,6 +13,11 @@ export function Workspace({ session }: { session: Session }) {
   const [rows, setRows] = useState<Row[]>([]);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [actionBusy, setActionBusy] = useState(false);
+  async function action(work: () => Promise<unknown>) {
+    if (actionBusy) return; setActionBusy(true); setError('');
+    try { await work(); } catch (e) { setError(e instanceof Error ? e.message : 'Não foi possível concluir.'); } finally { setActionBusy(false); }
+  }
   const [revision, setRevision] = useState(0);
   const [editor, setEditor] = useState<{ id?: string | number; text: string } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -67,12 +74,13 @@ export function Workspace({ session }: { session: Session }) {
       <div className="topbar"><div><span className="breadcrumb-brand">Garimpo Studio</span><span aria-hidden="true"> / </span><span>{labels[table]}</span></div><span className="member-chip"><span/>Membro da equipe</span></div>
       <main>
         <StudioHero/>
+        <TelegramPanel session={session}/>
         <header className="section-header"><div><h1>{labels[table]}</h1><p>{sectionDescriptions[table]}</p></div>{table !== 'profiles' && <button className="create-button" onClick={openNew}><span aria-hidden="true">＋</span> Novo registro</button>}</header>
         <section className="data-panel" aria-label={labels[table]}>
           <div className="toolbar"><p><span className="count-badge">{rows.length}</span> registros carregados <small>(até 100 por consulta)</small></p><button className="refresh-button" onClick={() => setRevision(n => n + 1)}><span aria-hidden="true">↻</span> Atualizar</button></div>
           {error && <p role="alert" className="error">{error}</p>}
           {busy ? <p role="status" className="table-loading">Carregando registros…</p> : rows.length === 0 ? <EmptyState table={table} failed={Boolean(error)} onCreate={openNew}/> : <div className="records">{rows.map((row, i) => <article key={String(row.id ?? row.user_id ?? i)}>
-            {typeof row.image_url === 'string' && row.image_url.startsWith('https://') && <img className="product-image" src={row.image_url} alt="" loading="lazy" onError={e => { e.currentTarget.hidden = true; }}/>}<h2>{titleOf(row)}</h2><dl>{Object.entries(row).filter(([k]) => !/token|secret|password|api.?key|authorization/i.test(k) && k !== 'image_url' && k !== 'id' && k !== 'user_id').map(([key, value]) => <div key={key}><dt>{displayLabel(key)}</dt><dd>{displayValue(key,value)}</dd></div>)}</dl>{table !== 'profiles' && (typeof row.id === 'string' || typeof row.id === 'number') && <button className="secondary" onClick={() => { setEditError(''); setEditor({ id: row.id as string | number, text: JSON.stringify(row, null, 2) }); }}>Editar registro</button>}</article>)}</div>}
+            {typeof row.image_url === 'string' && row.image_url.startsWith('https://') && <img className="product-image" src={row.image_url} alt="" loading="lazy" onError={e => { e.currentTarget.hidden = true; }}/>}<h2>{titleOf(row)}</h2>{table === 'products' && <div className="actions"><button className="secondary" disabled={actionBusy} onClick={() => action(() => exportArtwork(row, 'feed'))}>Baixar feed</button><button className="secondary" disabled={actionBusy} onClick={() => action(() => exportArtwork(row, 'story'))}>Baixar story</button></div>}{table === 'publications' && ['draft','scheduled'].includes(String(row.status)) && <button disabled={actionBusy} onClick={() => action(async () => { await sendPublication(session, String(row.id)); setRevision(n => n + 1); })}>{actionBusy ? 'Processando…' : 'Publicar no Telegram'}</button>}<dl>{Object.entries(row).filter(([k]) => !/token|secret|password|api.?key|authorization/i.test(k) && k !== 'image_url' && k !== 'id' && k !== 'user_id').map(([key, value]) => <div key={key}><dt>{displayLabel(key)}</dt><dd>{displayValue(key,value)}</dd></div>)}</dl>{table !== 'profiles' && (typeof row.id === 'string' || typeof row.id === 'number') && <button className="secondary" onClick={() => { setEditError(''); setEditor({ id: row.id as string | number, text: JSON.stringify(row, null, 2) }); }}>Editar registro</button>}</article>)}</div>}
         </section>
         <footer className="studio-footer"><img src="/brand/logo-lettering.png" alt="Tupi Garimpo" width="94" height="54"/><p>Do garimpo à sua comunidade.<br/><strong>O cuidado começa aqui.</strong></p><span>Studio da equipe</span></footer>
       </main>
