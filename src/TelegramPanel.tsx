@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
-const api = 'https://garimpo-studio-api.tupigarimpo.workers.dev';
+const api = '';
 export async function sendPublication(session: Session, id: string) {
   return call(session, `/api/publications/${encodeURIComponent(id)}/send`, 'POST');
 }
