@@ -32,7 +32,7 @@ Produtos têm exportação PNG feed 1080x1350 e story 1080x1920 usando os person
 
 ## Verificação
 
-`npm test` (34 testes nesta etapa), `npm run check:api`, `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
+`npm test` (38 testes nesta etapa), `npm run check:api`, `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
 
 ## Cloudflare
 
@@ -48,3 +48,15 @@ Rotação ainda requer ação nos provedores. Revogar tokens antigos do bot no B
 ## Backend no Pages (modo usado para upload direto)
 
 O build também gera `dist/_worker.js` em modo avançado oficial do Pages. `_routes.json` executa o backend somente em /api/* e /health; demais arquivos continuam estáticos. O frontend usa a API no mesmo domínio. Configure SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY e STUDIO_ORIGIN nas variáveis de produção do Pages e TELEGRAM_BOT_TOKEN como segredo. Essas configurações exigem um novo deploy. O Worker separado é uma opção futura, exigindo mudar o endereço da API no frontend.
+
+## Primeiro fluxo real validado
+
+Em 21/10/2026, um copo térmico de 1,2 L anunciado por R$ 52,99 foi cadastrado com imagem e link gerado pela conta Shopee. Oferta aprovada, rascunho criado e envio realizado pelo Studio. Telegram confirmou a mensagem 3: https://t.me/tupigarimpo/3. Feed 1080x1350 e story 1080x1920 foram exportados pela interface publicada e conferidos visualmente. A conta Shopee informa ausência de acesso à Open API; o feed oficial está vazio. Portanto esse primeiro produto veio do painel de afiliados e a descoberta contínua continua pendente.
+
+`public/.assetsignore` impede que o backend de Pages seja publicado como arquivo estático no modo alternativo Workers Assets. O deploy Pages reconhece `_worker.js` como servidor.
+
+## Padrão de descontos e cupons
+
+A partir desta versão, gerar arte ou enviar mensagem exige preço anterior real maior que o preço atual. Mensagens e artes exibem de/por, percentual calculado sem arredondar para cima e economia em reais. Cupons cadastrados são enviados completos na mensagem e incluídos no card. Nenhum preço anterior é inferido de percentuais aproximados. Produtos sem referência válida ficam para revisão. A indicação pública usa Publicidade em vez da expressão link de afiliado. O post histórico 3 não foi alterado.
+
+Amazon: o painel Creators API da conta informa que a conta de associado ainda não está aprovada para acesso. Não há credenciais disponíveis para conectar no momento. Shopee permanece manual, conforme solicitado; sua Open API ainda não está liberada e o feed oficial está vazio.
