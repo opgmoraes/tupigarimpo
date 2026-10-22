@@ -26,11 +26,13 @@ Criar/convidar membros no painel Auth e completar o profile como administrador. 
 
 Produtos, ofertas, canais e modelos possuem formulários baseados no esquema confirmado. Ofertas e publicações escolhem os registros relacionados. Publicações são salvas como rascunho. Até 100 registros por consulta; coleções maiores exigem paginação futura. A tela de modelos mantém um campo JSON para seu conteúdo estruturado. Perfil somente leitura, sem exclusão de registros.
 
-Não há envio/agendamento Telegram. O Worker existente `garimpo-studio-api` foi identificado e preservado. O frontend funciona diretamente com Supabase e RLS. Uma integração futura exige JWT/autorização no servidor e token **novo** guardado como secret do Worker; nunca em channels ou no browser. Publicação de rascunho não deve ser confundida com disparo ao canal.
+A integração Telegram está implementada em `api/worker.ts`, separada do frontend. Requer deploy com `wrangler.api.jsonc`, variável pública SUPABASE_PUBLISHABLE_KEY e segredo TELEGRAM_BOT_TOKEN. GET /api/telegram/status testa bot e permissões; POST /api/publications/:id/send publica oferta aprovada no canal ativo @tupigarimpo. Todas as rotas validam membro pelo JWT e RLS. A reivindicação atômica bloqueia disparos duplicados; entregas incertas permanecem em publishing para reconciliação manual. Rotas ainda dependem de deploy/configuração e validação real. Não há cron de descoberta ativo nesta etapa.
+
+Produtos têm exportação PNG feed 1080x1350 e story 1080x1920 usando os personagens e selo originais. A imagem deve permitir CORS; falha de carregamento bloqueia exportação. O arquivo gerado não é publicado no Instagram automaticamente. As quatro integrações de lojas dependem de acesso oficial de afiliado/API; login na loja não garante essa habilitação.
 
 ## Verificação
 
-`npm test` (24 testes), `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
+`npm test` (31 testes nesta etapa), `npm run check:api`, `npm run build`, `npm run check:workers`. CI em `.github/workflows/ci.yml`. Os testes de interface simulam a API e cobrem negação de acesso e revogação detectada ao atualizar. O build final deve conter as variáveis públicas corretas; rebuild após alterá-las.
 
 ## Cloudflare
 

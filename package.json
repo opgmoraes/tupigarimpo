@@ -13,7 +13,9 @@
     "test": "vitest run",
     "deploy:workers": "npm run build && wrangler deploy",
     "deploy:pages": "npm run build && wrangler pages deploy dist --project-name garimpo-studio",
-    "check:workers": "wrangler deploy --dry-run"
+    "check:workers": "wrangler deploy --dry-run",
+    "check:api": "tsc -p tsconfig.api.json",
+    "deploy:api": "npm run check:api && wrangler deploy --config wrangler.api.jsonc"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",

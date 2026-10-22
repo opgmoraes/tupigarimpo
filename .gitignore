@@ -5,5 +5,6 @@ dist/
 !.env.example
 .dev.vars*
 .wrangler/
+.local-cloudflare/
 coverage/
 *.log

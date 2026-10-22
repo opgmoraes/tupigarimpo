@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "garimpo-studio-api",
+  "main": "api/worker.ts",
+  "compatibility_date": "2026-10-21",
+  "vars": {
+    "SUPABASE_URL": "https://egdoeevgrqktbsgemtbk.supabase.co",
+    "STUDIO_ORIGIN": "https://garimpo-studio.pages.dev"
+  }
+  // Set SUPABASE_PUBLISHABLE_KEY as a runtime variable.
+  // Set TELEGRAM_BOT_TOKEN using Cloudflare Secrets. Never paste it here.
+}
